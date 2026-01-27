@@ -66,8 +66,7 @@ type GenerateConfig struct {
 	ForceRepoDataUpdate bool
 }
 
-type noForce struct {
-}
+type noForce struct{}
 
 func (n noForce) MustRegenerateModule(_ context.Context, _ module.Addr) bool {
 	return false
@@ -759,7 +758,7 @@ func (g generator) extractModuleSchema(ctx context.Context, directory string, d 
 
 	rootModuleSchema := moduleSchema.RootModule
 
-	g.extractModuleVariables(rootModuleSchema, &d.BaseDetails)
+	g.extractModuleVariables(ctx, rootModuleSchema, &d.BaseDetails)
 	g.extractModuleOutputs(rootModuleSchema, &d.BaseDetails)
 	g.extractModuleDependencies(rootModuleSchema, d)
 	g.extractProviderDependencies(moduleSchema, d)
@@ -784,7 +783,7 @@ func (g generator) extractExampleSchema(ctx context.Context, directory string, e
 
 	rootModuleSchema := moduleSchema.RootModule
 
-	g.extractModuleVariables(rootModuleSchema, &e.BaseDetails)
+	g.extractModuleVariables(ctx, rootModuleSchema, &e.BaseDetails)
 	g.extractModuleOutputs(rootModuleSchema, &e.BaseDetails)
 
 	return nil
@@ -807,7 +806,7 @@ func (g generator) extractModuleOutputs(moduleSchema moduleschema.ModuleSchema, 
 	}
 }
 
-func (g generator) extractModuleVariables(moduleSchema moduleschema.ModuleSchema, d *BaseDetails) {
+func (g generator) extractModuleVariables(ctx context.Context, moduleSchema moduleschema.ModuleSchema, d *BaseDetails) {
 	for variableName, variable := range moduleSchema.Variables {
 		if _, ok := d.Variables[variableName]; ok {
 			continue
